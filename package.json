@@ -1,0 +1,21 @@
+{
+  "name": "chat-application",
+  "version": "1.0.0",
+  "description": "Watson NLU Moderated Chat application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "nodemonstart": "nodemon server.js"
+  },
+  "author": "Ashley Bending",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ibm-watson": "^5.7.1",
+    "moment": "^2.29.1",
+    "socket.io": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
