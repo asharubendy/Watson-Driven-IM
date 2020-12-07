@@ -9,14 +9,11 @@ const express = require('express');
 const socketio = require('socket.io')
 //calls the message formatting system from another file
 const formatMessage = require('./utils/messages')
-//requiring the NLU script
-// const NLU = require('./NLUcalling');
-
 //requiring the NLU / IBM Watson Dependancies
 const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
 // calling the authenticator method through Watson
 const { IamAuthenticator } = require('ibm-watson/auth');
-
+//new instance of the NLU
 const nlu = new NaturalLanguageUnderstandingV1({
   //sets NLU version
   version: '2020-08-01',
@@ -26,9 +23,8 @@ const nlu = new NaturalLanguageUnderstandingV1({
     apikey: 'IFFrSi2XqsDYkLlRETWyjoR3DnJnmkwufiLZwW7aP7nz',}),
   //sets the service URL
   serviceUrl: 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/392ccbd3-d571-4040-857a-198ce11f962a',});
-//sets up the messageFilter as a function with the inputString as a way of passing in variables
 
-//sets express to the variable app, means i can make changes without directly affecting the express dependancy
+//sets express to the const app, means i can make changes without directly affecting the express dependancy
 const app = express(); 
 //creates http server and passes in the express framework - required so express can work with Socket.IO 
 const server = http.createServer(app)
@@ -40,7 +36,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const serverName = 'Server'
 //tells socket io on a new connection assign a new websocket ID
 io.on('connection', socket => {
-
     // greets the user  by emmiting a message to the websocket from the server
     socket.emit('message', formatMessage(serverName, 'welcome to the chat'));
     //tells the users in the chat that there is a new user joining
@@ -57,11 +52,15 @@ io.on('connection', socket => {
         console.log('im here')
         //logs the message
         console.log(msg)
-      
+        //the main filtering function, this is loaded inside of here since the output is a io.emit output, it needs to be inside of io.on connection, and it makes sense that its inside of the function that its called in.
         function FilteringFunction(inputString){
+          //Sets a string to output if there is an error
           const errormessage = 'sorry there has been an error processing your message'
+          //sets a const to the input string
           const input = inputString;
+          //resets the filtered message when the function is called to make sure the pipeline is clear
           let filteredMessage = ''
+
           console.log('inside of the filtering function')
         //removes unnesaccary parameters from the response from watson NLU
         outputRemoveParam = (output) =>{
@@ -90,14 +89,10 @@ io.on('connection', socket => {
             }
           }
         };
-        
-        
         //calling for the NLU to analyse the text
         nlu.analyze(analyzeParams)
         //async call to wait for this to finsh, once it has feed the data into the function
         .then(analysisResults => {
-        // console.log(JSON.stringify(analysisResults, null, 2));
-        
         // calls the outputRemove Function
         outputRemoveParam(analysisResults);
         // Calls the Arrayified function    
@@ -107,24 +102,19 @@ io.on('connection', socket => {
         console.log(arrayified[1][1] + ' ' + arrayified[1][0])
         console.log(arrayified[2][1] + ' ' + arrayified[2][0])
         console.log(arrayified[3][1] + ' ' + arrayified[3][0])
-        console.log(arrayified[4][1] + ' ' + arrayified[4][0])  
-        
+        console.log(arrayified[4][1] + ' ' + arrayified[4][0]) 
+          //basic filtering (this will be changed later )
           if (arrayified[0][1] >= 0.5){
             console.log('very sad message')
-            filteredMessage = 'sad'  
+            filteredMessage = 'veroy sad :('  
           } else if (arrayified[3][1] >= 0.5){
             console.log('very disgusted message')
-            filteredMessage = 'disgusted'
+            filteredMessage = 'ewwiwiwiwew gross'
           } else if (arrayified[4][1] >= 0.5){
            console.log('very angry message')
-           filteredMessage = 'angry'
+           filteredMessage = 'dont be angy >:('
           } else {filteredMessage = input} 
-          
-          console.log('this is the fm: ' + filteredMessage)
-        
-          console.log(typeof(filteredMessage));
-        
-         
+        //emits the message from the server to the rest of the clients, formats the message and filters it  
         io.emit('message',formatMessage(serverName,filteredMessage))
         
         }).catch(err => {
@@ -137,7 +127,7 @@ io.on('connection', socket => {
           */
           })
         }
-    
+        //calls the above filtering function
         FilteringFunction(msg)
     });
     
