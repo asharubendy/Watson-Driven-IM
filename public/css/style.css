@@ -1,34 +1,32 @@
+/* Importing font */
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-
+/* enables the colours to be used everywhere without having to restyle them in each one */
 :root {
-	--dark-color-a: #667aff;
-	--dark-color-b: #7386ff;
+	--dark-color-a: #254E70;
+	--dark-color-b: #37718E;
 	--light-color: #e6e9ff;
 	--success-color: #5cb85c;
 	--error-color: #d9534f;
 }
-
+/*  used for page sizing*/
 * {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 }
-
+/* body styling used for the overall body of the page, elements inside of this inhert these properties */
 body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
 	background: var(--light-color);
 	margin: 20px;
 }
-
-ul {
-	list-style: none;
-}
-
+/* removes styling from hyperlinks */
 a {
 	text-decoration: none;
 }
 
+/* button styling */
 .btn {
 	cursor: pointer;
 	padding: 5px 15px;
@@ -38,7 +36,7 @@ a {
 	font-size: 17px;
 }
 
-/* Chat Page */
+/* Chat styling */
 
 .chat-container {
 	max-width: 1100px;
@@ -57,34 +55,6 @@ a {
 	align-items: center;
 	justify-content: space-between;
 }
-
-.chat-main {
-	display: grid;
-	grid-template-columns: 1fr 3fr;
-}
-
-.chat-sidebar {
-	background: var(--dark-color-b);
-	color: #fff;
-	padding: 20px 20px 60px;
-	overflow-y: scroll;
-}
-
-.chat-sidebar h2 {
-	font-size: 20px;
-	background: rgba(0, 0, 0, 0.1);
-	padding: 10px;
-	margin-bottom: 20px;
-}
-
-.chat-sidebar h3 {
-	margin-bottom: 15px;
-}
-
-.chat-sidebar ul li {
-	padding: 10px 0;
-}
-
 .chat-messages {
 	padding: 30px;
 	max-height: 500px;
@@ -127,7 +97,7 @@ a {
 	flex: 1;
 }
 
-/* Join Page */
+/* Join Page styling */
 .join-container {
 	max-width: 500px;
 	margin: 80px auto;
@@ -178,13 +148,9 @@ a {
 	margin-top: 20px;
 	width: 100%;
 }
-
+/* responsive scaling */
 @media (max-width: 700px) {
 	.chat-main {
 		display: block;
-	}
-
-	.chat-sidebar {
-		display: none;
 	}
 }
