@@ -13,6 +13,13 @@ socket.on('message', message => {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
+const {username} = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+});
+
+socket.emit('sendName', {username});
+
+console.log(username)
 // Message submit
 chatForm.addEventListener('submit', e => {
 //stops the message if its blank
