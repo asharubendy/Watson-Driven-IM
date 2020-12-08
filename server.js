@@ -100,13 +100,13 @@ const io = socketio(server)
         //debugging
         console.log('very sad message')
         //sets the message to a filtered message
-        filteredMessage = 'High levels of sadness detected - message removed - Are you all good bro?';  
+        filteredMessage = 'High levels of sadness detected - message removed - Are you all good?';  
       } else if (arrayified[3][1] >= 0.5){
         console.log('very disgusted message')
-        filteredMessage = 'high levels of disgusted detected - message removed - Try not to be so mean ';
+        filteredMessage = 'high levels of disgusted detected - message removed - Try not to be so mean. ';
       } else if (arrayified[4][1] >= 0.5){
        console.log('very angry message')
-       filteredMessage = 'high levels of anger detected - message removed - Take a breath, calm down, then try again';
+       filteredMessage = 'high levels of anger detected - message removed - Take a breath, calm down, then try again.';
       } else { filteredMessage = input } 
     //emits the message from the server to the rest of the clients, formats the message into an object and filters the text inside it  
     io.emit('message',formatMessage( ' User ',filteredMessage))
@@ -115,14 +115,17 @@ const io = socketio(server)
     //since js supports .catch, when watson NLU throws an error, it will default to this parameter.
      console.log('error:', err);
      //emits a predefined message when an error occurs
-     io.emit('message',formatMessage(serverName,errormessage)) 
+     if (err.status = 400){
+       io/emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
+     }
      /*error logs:
      400 = no content or unsupported text language 
      422 = too little content 
       */
-
+      if (err.status = 422){
+        io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
+      }
       //planned feature - add a backup method for filtering via keywords when a 422 error is given
-
       })
     }
     //sets the deafult static page for express by using the path.join function to get the top level directory and the public folder and combine them
