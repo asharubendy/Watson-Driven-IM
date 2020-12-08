@@ -28,6 +28,31 @@ const app = express();
 const server = http.createServer(app)
 //creates the websocket server (socket io) and passes in the http server 
 const io = socketio(server)
+  
+    function filterGenerator(num){
+    n = Math.floor(Math.random() * (3 - 0 + 1) + 0);
+    
+    angerFilterMessages = [`Please try to calm down`,`Take a deep breath, then try again`,`It's not that deep`,`Just try to put yourself in their shoes`];
+    sadnessFilterMessages = [`Hey man, are you all good?`,`Everything alright?`,`Inhale, exhale`,`You'll be alright.`];
+    disgustFilterMessages = [`Try not to be so mean`,`Don't look down on people like that`,`Chill out a little`,`Don't talk to people like that`];
+
+      if (num == 1){
+        return angerFilterMessages[n];
+      }else if (num == 2){
+        return sadnessFilterMessages[n];
+      }else if (num == 3){
+        return disgustFilterMessages[n];
+      }else{
+        return null; 
+      } 
+    }
+
+
+
+
+
+
+
 
     //function that returns the username and text along with the time in an object, this is for formatting the message in css and html 
     function formatMessage(username, text) {
@@ -39,7 +64,7 @@ const io = socketio(server)
     }
 
     //the main filtering function, this is loaded inside of here since the output is a io.emit output, it needs to be inside of io.on connection, and it makes sense that its inside of the function that its called in.
-    function FilteringFunction(inputString){
+    function FilteringFunction(username,inputString){
       //Sets a string to output if there is an error
       const errormessage = 'sorry there has been an error processing your message'
       //sets a const to the input string
@@ -95,59 +120,62 @@ const io = socketio(server)
       //add a way of adjusting the peramiters for the filtered message clientside 
       //possibly wrap the message in an object along with the clients preferences or
       // add it at the beginning of the message and devise a way of removing it from the string and then inputting it into the filtering system
+      // positive reinforcement through suggestions of tone changes and recognition of that 
+      //review sent message - offer alternate suggestions. 
 
       if (arrayified[0][1] >= 0.5){
         //debugging
         console.log('very sad message')
         //sets the message to a filtered message
-        filteredMessage = 'High levels of sadness detected - message removed - Are you all good?';  
+        filteredMessage = 'High levels of sadness detected - message removed - ' + filterGenerator(2);  
       } else if (arrayified[3][1] >= 0.5){
         console.log('very disgusted message')
-        filteredMessage = 'high levels of disgusted detected - message removed - Try not to be so mean. ';
+        filteredMessage = 'high levels of disgusted detected - message removed - ' + filterGenerator(3);
       } else if (arrayified[4][1] >= 0.5){
        console.log('very angry message')
-       filteredMessage = 'high levels of anger detected - message removed - Take a breath, calm down, then try again.';
+       filteredMessage = 'high levels of anger detected - message removed - ' + filterGenerator(1);
       } else { filteredMessage = input } 
     //emits the message from the server to the rest of the clients, formats the message into an object and filters the text inside it  
-    io.emit('message',formatMessage( ' User ',filteredMessage))
+    io.emit('message',formatMessage( username ,filteredMessage))
     //catch error async function 
     }).catch(err => {
     //since js supports .catch, when watson NLU throws an error, it will default to this parameter.
-     console.log('error:', err);
-     //emits a predefined message when an error occurs
+    console.log('error:', err);
+    //emits a predefined message when an error occurs
     /*error logs:
     400 = no content or unsupported text language 
     422 = too little content 
      */
-    io.emit('message', formatMessage(serverName, 'Something went wrong processing your message' ))
-    
-    //Figure out why this wont work with heroku 
-    // if (err.code = 422){
-    //   console.log(err.code)
-    //   io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
-    // } else if (err.code = 400){
-    //   console.log(err.code)
-    //   io.emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
-    // } 
+    if (err.code = 422){
+      console.log(err.code)
+      io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
+    } else if (err.code = 400){
+      console.log(err.code)
+      io.emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
+    } 
      
      //planned feature - add a backup method for filtering via keywords when a 422 error is given
-      })
+     })
     }
     //sets the deafult static page for express by using the path.join function to get the top level directory and the public folder and combine them
     app.use(express.static(path.join(__dirname, 'public')));
     //sets a variable named server name to server, this is used for system messages like the greeting and disconnect messages.
     const serverName = 'Server '
     //tells socket io on a new connection assign a new websocket ID
+    let user = '';
     io.on('connection', socket => {
+
+      socket.on('sendName',({username}) => {
+        let user = username;
+        socket.emit('message', formatMessage(serverName, `welcome ${user} to the chat`));
+      });
     // greets the user  by emmiting a message to the websocket from the server
-    socket.emit('message', formatMessage(serverName, 'welcome to the chat'));
     //tells the users in the chat that there is a new user joining
     socket.broadcast.emit('message', formatMessage(serverName,'a user has joined the chat'));
-    //tells the users in the chat that a user has left by a function passed in
-    socket.on('disconnect', () => {
     //emits a message to the websockets, formatting the message 
-    io.emit('message', formatMessage(serverName,'a user has left the chat'))
-    })
+    socket.on('disconnect', () => {
+      io.emit('message', formatMessage(serverName,  `${user} has left the chat`))
+      })
     //when the server recieves a chat message, emit to other clients connected to the websocket
     socket.on('chatMessage', msg => {
       //logs the starting point
@@ -155,7 +183,7 @@ const io = socketio(server)
         //logs the message
         console.log(msg)
         //calls the filtering function
-        FilteringFunction(msg)
+        FilteringFunction(user, msg)
     });
     
 })
