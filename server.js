@@ -136,7 +136,7 @@ const io = socketio(server)
        filteredMessage = 'high levels of anger detected - message removed - ' + filterGenerator(1);
       } else { filteredMessage = input } 
     //emits the message from the server to the rest of the clients, formats the message into an object and filters the text inside it  
-    io.emit('message',formatMessage( username ,filteredMessage))
+    io.emit('message',formatMessage(username,filteredMessage))
     //catch error async function 
     }).catch(err => {
     //since js supports .catch, when watson NLU throws an error, it will default to this parameter.
@@ -166,12 +166,12 @@ const io = socketio(server)
     io.on('connection', socket => {
 
       socket.on('sendName',({username}) => {
-        let user = username;
+        user = username;
         socket.emit('message', formatMessage(serverName, `welcome ${user} to the chat`));
       });
     // greets the user  by emmiting a message to the websocket from the server
     //tells the users in the chat that there is a new user joining
-    socket.broadcast.emit('message', formatMessage(serverName,'a user has joined the chat'));
+    socket.broadcast.emit('message', formatMessage(serverName,`${user} has joined the chat`));
     //emits a message to the websockets, formatting the message 
     socket.on('disconnect', () => {
       io.emit('message', formatMessage(serverName,  `${user} has left the chat`))
@@ -181,12 +181,13 @@ const io = socketio(server)
       //logs the starting point
         console.log('im here')
         //logs the message
+        console.log(user)
         console.log(msg)
         //calls the filtering function
         FilteringFunction(user, msg)
     });
     
-})
+  })
 
 //looks to see if there is a environment variable named port and if not use port 3000
 const PORT = process.env.PORT || 3000;
