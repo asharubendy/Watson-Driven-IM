@@ -119,14 +119,16 @@ const io = socketio(server)
     400 = no content or unsupported text language 
     422 = too little content 
      */
+    io.emit('message', formatMessage(serverName, 'Something went wrong processing your message' ))
     
-    if (err.code = 422){
-      console.log(err.code)
-      io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
-    } else if (err.code = 400){
-      console.log(err.code)
-      io.emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
-    } 
+    //Figure out why this wont work with heroku 
+    // if (err.code = 422){
+    //   console.log(err.code)
+    //   io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
+    // } else if (err.code = 400){
+    //   console.log(err.code)
+    //   io.emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
+    // } 
      
      //planned feature - add a backup method for filtering via keywords when a 422 error is given
       })
