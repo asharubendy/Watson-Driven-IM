@@ -113,17 +113,20 @@ const io = socketio(server)
     //catch error async function 
     }).catch(err => {
     //since js supports .catch, when watson NLU throws an error, it will default to this parameter.
-     console.log('error:', err);
-     //emits a predefined message when an error occurs
-     io.emit('message',formatMessage(serverName,errormessage)) 
-     /*error logs:
-     400 = no content or unsupported text language 
-     422 = too little content 
-      */
-
-      //planned feature - add a backup method for filtering via keywords when a 422 error is given
-
-      })
+    console.log('error:', err);
+    //emits a predefined message when an error occurs
+    if (err.status = 400){
+      io/emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
+    }
+    /*error logs:
+    400 = no content or unsupported text language 
+    422 = too little content 
+     */
+     if (err.status = 422){
+       io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
+     }
+     //planned feature - add a backup method for filtering via keywords when a 422 error is given
+     })
     }
     //sets the deafult static page for express by using the path.join function to get the top level directory and the public folder and combine them
     app.use(express.static(path.join(__dirname, 'public')));
