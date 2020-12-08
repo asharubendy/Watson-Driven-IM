@@ -115,16 +115,18 @@ const io = socketio(server)
     //since js supports .catch, when watson NLU throws an error, it will default to this parameter.
     console.log('error:', err);
     //emits a predefined message when an error occurs
-    if (err.status = 400){
-      io/emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
-    }
     /*error logs:
     400 = no content or unsupported text language 
     422 = too little content 
      */
-     if (err.status = 422){
-       io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
-     }
+    if (err.code = 422){
+      console.log(err.code)
+      io.emit('message', formatMessage(serverName, 'You have entered too little content for this message to be filtered' ))
+    } else if (err.code = 400){
+      console.log(err.code)
+      io.emit('message', formatMessage(serverName, 'You have entered nothing, please type a message.'))
+    } 
+     
      //planned feature - add a backup method for filtering via keywords when a 422 error is given
      })
     }
