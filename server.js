@@ -186,7 +186,7 @@ async function BackupFiltering(inputString){
         // Resolve the promise
         console.log("Before Return: " + string);
         resolve(string);
-    }, 500);
+    }, 1000);
   });
 
 } 
