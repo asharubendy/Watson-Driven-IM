@@ -81,6 +81,26 @@ a {
 	color: #777;
 }
 
+.Schat-messages .Smessage {
+	padding: 10px;
+	margin-bottom: 15px;
+	background-color: var(--error-color);
+	border-radius: 5px;
+	overflow-wrap: break-word;
+}
+
+.Schat-messages .Smessage .Smeta {
+	font-size: 15px;
+	font-weight: bold;
+	color: var(--dark-color-b);
+	opacity: 0.7;
+	margin-bottom: 7px;
+}
+
+.Schat-messages .Smessage .smeta span {
+	color: #777;
+}
+
 .chat-form-container {
 	padding: 20px 30px;
 	background-color: var(--dark-color-a);
