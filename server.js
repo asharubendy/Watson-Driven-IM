@@ -88,8 +88,24 @@ async function BackupFiltering(inputString){
       "bitch",
       "fag",
     ],
-    "whitelist": [],
+    "whitelist": [
+      "push",
+      "trying",
+      "gonna",
+      "i know",
+      "nigera",
+      "gonna",
+      "working class",
+      "class",
+      "school",
+      "shooting",
+    ],
     "blacklist": [
+      "queers",
+      "school shooting",
+      "genocide",
+      "holocaust",
+      "ethnic cleansing",
       "nigga",
       "chink",
       "cracker",
@@ -110,9 +126,7 @@ async function BackupFiltering(inputString){
       "anal",
       "anus",
       "arse",
-      "ass",
-      "ass fuck",
-      "ass hole",
+      "asshole",
       "assfucker",
       "asshole",
       "assshole",
@@ -166,7 +180,8 @@ async function BackupFiltering(inputString){
       "son of a bitch",
       "tits",
       "twat",
-      "whore"
+      "whore",
+      "molest",
     ]
   });
   // ADD ABBREVIATED SWEARWORDS!!!!!!
@@ -291,7 +306,7 @@ function FilteringFunction(username,inputString){
     if(input == ""){
       io.emit('message',formatMessage(serverName, "You have not entered any text!"))
     }else {
-      io.emit('message',formatMessage(serverName, "We have detected a fnon-english language, this server only supports English!"))
+      io.emit('message',formatMessage(serverName, "We have detected a non-english language, this server only supports English!"))
     }
     
   }else{
