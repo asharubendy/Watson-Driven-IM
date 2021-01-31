@@ -32,9 +32,7 @@ chatForm.addEventListener('submit', e => {
     //removes whitespace
     msg = msg.trim();
     //sends the message to the server to the other client
-    socket.emit('chatMessage', msg);
-    socket.emit('chatUsername', username)
-    
+    socket.emit('chatMessage', msg, username);
     // Clear input
     e.target.elements.msg.value = '';
     //resets the browsers focus to the text box
@@ -61,6 +59,7 @@ function outputMessage(message) {
     div.appendChild(para);
     document.querySelector('.Schat-messages').appendChild(div);
  } else {
+
   const div = document.createElement('div');
     div.classList.add('message');
     console.log(username);
@@ -72,7 +71,7 @@ function outputMessage(message) {
     p.innerHTML += `<span>${message.time}</span>`;
     div.appendChild(p);
     //creates a new paragraph text  and adds the user message to the message content 
-    const para = document.createElement('p');
+    const para = document.createElement('p')
     para.classList.add('text');
     para.innerText = message.text;
     div.appendChild(para);

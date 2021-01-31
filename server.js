@@ -18,7 +18,7 @@ const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-unde
 const { IamAuthenticator } = require('ibm-watson/auth');
 const { resolve } = require('path');
 
-//new instance of the NLU (!!!! IMPORTANT !!!! REMEMBER TO CHANGE THIS BEFORE YOU GO LIVE YOU MELON - USE THE CREDENTIALS FILE AND HIDE IT)
+//new instance of the NLU 
 const nlu = new NaturalLanguageUnderstandingV1({
   //sets NLU version
   version: '2020-08-01',
@@ -41,7 +41,7 @@ req.headers({
 	"x-rapidapi-host": "phonetic-bad-word-filter.p.rapidapi.com",
 	"useQueryString": true
 });
-let finalMessage = ''
+let msg = ''
 
 function filterGenerator(num){
   n = Math.floor(Math.random() * (3 - 0 + 1) + 0);
@@ -60,14 +60,14 @@ function filterGenerator(num){
    return null; 
   } 
 }
-filteredMessage = " ";
 //function that returns the username and text along with the time in an object, this is for formatting the message in css and html 
-function formatMessage(username, text) {
+function formatMessage(username, text, original) {
       
   return {
     username,
     text,
-    time: moment().format('h:mm a')
+    time: moment().format('h:mm a'),
+    original
   };
 
 }
@@ -75,14 +75,18 @@ function formatMessage(username, text) {
 //secondary filtering and filtered word list 
 
 async function BackupFiltering(inputString){
-  let string = "not changed"
+  let string = "Time out Error"
 
   req.type("json");
   req.send({
     "phrase": inputString,
     "phoneticlist": [
       "nigger",
-
+      "coon",
+      "chink",
+      "tranny",
+      "bitch",
+      "fag",
     ],
     "whitelist": [],
     "blacklist": [
@@ -152,6 +156,7 @@ async function BackupFiltering(inputString){
       "porno",
       "pornography",
       "pussy",
+      "paki",
       "retard",
       "sadist",
       "sex",
@@ -159,10 +164,8 @@ async function BackupFiltering(inputString){
       "shit",
       "slut",
       "son of a bitch",
-      "suck",
       "tits",
       "twat",
-      "viagra",
       "whore"
     ]
   });
@@ -191,7 +194,6 @@ async function BackupFiltering(inputString){
 
 } 
 
-
 //the main filtering function, this is loaded inside of here since the output is a io.emit output, it needs to be inside of io.on connection, and it makes sense that its inside of the function that its called in.
 function FilteringFunction(username,inputString){
   //Sets a string to output if there is an error
@@ -201,7 +203,7 @@ function FilteringFunction(username,inputString){
   const input = inputString;
   //resets the filtered message when the function is called to make sure the pipeline is clear
   let filteredMessage
-  let finalMessage = ' ';
+  
   //debugging
   console.log('inside of the filtering function')
   //removes unnesaccary parameters from the response from watson NLU
@@ -245,17 +247,7 @@ function FilteringFunction(username,inputString){
   console.log(arrayified[2][1] + ' ' + arrayified[2][0])
   console.log(arrayified[3][1] + ' ' + arrayified[3][0])
   console.log(arrayified[4][1] + ' ' + arrayified[4][0]) 
-
-  //basic filtering - Planned features: 
-  //add a way of adjusting the peramiters for the filtered message clientside 
-  //possibly wrap the message in an object along with the clients preferences or
-  // add it at the beginning of the message and devise a way of removing it from the string and then inputting it into the filtering system
-  // positive reinforcement through suggestions of tone changes and recognition of that 
-  //review sent message - offer alternate suggestions. 
-  function setUser (username) {
-    user = username;
-  }
-
+  
   if (arrayified[0][1] >= 0.5){
     //debugging
     console.log('very sad message')
@@ -277,8 +269,6 @@ function FilteringFunction(username,inputString){
       io.emit('message',formatMessage(user,filteredMessage))
     })()
   } 
-  
-  
   //emits the message from the server to the rest of the clients, formats the message into an object and filters the text inside it  
   
   //catch error async function 
@@ -301,7 +291,7 @@ function FilteringFunction(username,inputString){
     if(input == ""){
       io.emit('message',formatMessage(serverName, "You have not entered any text!"))
     }else {
-      io.emit('message',formatMessage(serverName, "We have detected a forien language, this server only supports English!"))
+      io.emit('message',formatMessage(serverName, "We have detected a fnon-english language, this server only supports English!"))
     }
     
   }else{
@@ -332,19 +322,31 @@ io.on('connection', socket => {
     io.emit('message', formatMessage(serverName,  `${user} has left the chat`))
   })
 
-  socket.on('chatUsername', username => {
-    user = username.username;
-  })
+  // socket.on('chatUsername', username => {
+  //   user = username.username;
+  // })
   //when the server recieves a chat message, emit to other clients connected to the websocket
-  socket.on('chatMessage', msg => { 
-    //logs the starting point
 
-    //logs the message
-    console.log(msg)
-    //calls the filtering function
-    console.log(user)
-    FilteringFunction(user, msg)
+  socket.on('chatMessage', (msg, username) => { 
+    //logs the starting point
+    
+    let user = ""
+  
+     
+    user = username.username;
+    console.log("message recieved")
+     //logs the message
+     console.log(msg)
+     console.log(username)
+     console.log(user)
+     //calls the filtering function
+     FilteringFunction(user, msg)
+     user = ''
+   
+   
   });
+    
+    
     
 })
 
