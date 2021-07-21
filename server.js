@@ -1,3 +1,7 @@
+//********************************************************************************************************************************************************************************************
+//PLEASE NOTE: THIS CODE CONTAINS SLURS FOR THE SOLE PURPOSE OF BLACKLISTING THEM FROM MESSAGES, IF YOU ARE SENSITIVE TO OFFENSIVE TERMS, PLEASE SKIP OVER THE SECTION DENOTED BETWEEN THE #'S
+//********************************************************************************************************************************************************************************************
+
 //requires the nodeJS library for working with file paths
 const path = require('path');
 //requires the nodeJS Library HTTP, enbales use of the HTTP server and client
@@ -73,10 +77,12 @@ function formatMessage(username, text, original) {
 }
 
 //secondary filtering and filtered word list 
-
+//############################################
+//PLEASE NOTE THIS SECTION CONTAINS OFFENSIVE WORDS AND SLURS, PLEASE PROCEED WITH CAUTION
+//############################################
 async function BackupFiltering(inputString){
   let string = "Time out Error"
-
+  
   req.type("json");
   req.send({
     "phrase": inputString,
@@ -169,7 +175,10 @@ async function BackupFiltering(inputString){
       "whore"
     ]
   });
-  // ADD ABBREVIATED SWEARWORDS!!!!!!
+//############################################
+//section end
+//############################################
+	
   req.end(function (res) {
    
     //console.log(res)
@@ -342,12 +351,7 @@ io.on('connection', socket => {
      //calls the filtering function
      FilteringFunction(user, msg)
      user = ''
-   
-   
   });
-    
-    
-    
 })
 
 //looks to see if there is a environment variable named port and if not use port 3000
