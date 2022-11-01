@@ -29,7 +29,7 @@ const nlu = new NaturalLanguageUnderstandingV1({
   //sets the authenticator to IAM, IBMS method of AUTH  
   authenticator: new IamAuthenticator({
   //Sets the API key
-  apikey: 'IFFrSi2XqsDYkLlRETWyjoR3DnJnmkwufiLZwW7aP7nz',}),
+  apikey: '',}),
   //sets the service URL
   serviceUrl: '',});
   //sets express to the const app, means i can make changes without directly affecting the express dependancy
