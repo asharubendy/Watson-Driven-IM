@@ -31,7 +31,7 @@ const nlu = new NaturalLanguageUnderstandingV1({
   //Sets the API key
   apikey: 'IFFrSi2XqsDYkLlRETWyjoR3DnJnmkwufiLZwW7aP7nz',}),
   //sets the service URL
-  serviceUrl: 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/392ccbd3-d571-4040-857a-198ce11f962a',});
+  serviceUrl: '',});
   //sets express to the const app, means i can make changes without directly affecting the express dependancy
 const app = express(); 
 //creates http server and passes in the express framework - required so express can work with Socket.IO 
@@ -41,8 +41,8 @@ const io = socketio(server)
 //headers for rapidAPI request
 req.headers({
 	"content-type": "application/json",
-	"x-rapidapi-key": "d7d577193emsh1553c6b1eda0b0bp13a438jsndcaaf1000fee",
-	"x-rapidapi-host": "phonetic-bad-word-filter.p.rapidapi.com",
+	"x-rapidapi-key": "",
+	"x-rapidapi-host": "",
 	"useQueryString": true
 });
 let msg = ''
